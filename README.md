@@ -1,5 +1,21 @@
 # ZBS_Flasher
 
+## Workflow
+0. `cd ZBS_Flasher && python -m venv .venv && source .venv/bin/activate && pip install pyserial click`
+1. connect breadboard power supply
+2. turn on breadboard power supply
+3. connect ESP via micro-USB cable
+4. upload ESP firmware via VSCode platformio extension
+    - Open ESP32_Flasher folder in VSCode
+    - Open platformio extension
+    - Press "General > Upload and Monitor"
+5. `python zbs_flasher.py -p /dev/ttyUSB0 read-infopage dump.bin && diff infopage_backups/<tag>.bin dump.bin`
+6. If there is a difference, reseat cables and repeat from 5.
+7. If ok, run other zbs_flasher commands.  
+   `python zbs_flasher.py -p /dev/ttyUSB1 write custom-firmware/SOL_M2_29_SSD_0029.bin`
+8. After writing firmware, disconnect ESP micro-USB cable from laptop.
+9. Turn off and turn on breadboard power supply to fully power cycle the tag. (if ESP is still connected to laptop the tag draws current from somewhere and is not power cycled).
+
 ### By Aaron Christophel <https://ATCnetz.de>
 
 ### You can support my work via PayPal: <https://paypal.me/hoverboard1> this keeps projects like this coming
@@ -67,14 +83,14 @@ It is written for the ESP32 but should run basically on any SOC with ~8 GPIOS an
 
 
 # Pins:
-ZBS243 Pin                       |Pin name                       |Name                       |ESP32 Pin                       |ESP82622 Pin                     |Arduino Nano Pin
-:-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:
-14 | P0_0 | SPI_Clk | 18 | 14 | 13
-15 | P0_1 | SPI_MoSi |  5 | 13 | 11
-16 | P0_2 | SPI_MiSo |  17 | 12 | 12
-17 | P0_3 | SPI_SS |  23 | 15 | 10
-22 | RST | RESET |  19 | 0 | 7
-ALL VCC | VCC | ZBS243 Power | 16 !!!* | 4 !!!* | 14 through 19
+| ZBS243 Pin | Pin name |     Name     | ESP32 Pin | ESP82622 Pin | Arduino Nano Pin |
+| :--------: | :------: | :----------: | :-------: | :----------: | :--------------: |
+|     14     |   P0_0   |   SPI_Clk    |    18     |      14      |        13        |
+|     15     |   P0_1   |   SPI_MoSi   |     5     |      13      |        11        |
+|     16     |   P0_2   |   SPI_MiSo   |    17     |      12      |        12        |
+|     17     |   P0_3   |    SPI_SS    |    23     |      15      |        10        |
+|     22     |   RST    |    RESET     |    19     |      0       |        7         |
+|  ALL VCC   |   VCC    | ZBS243 Power |  16 !!!*  |    4 !!!*    |  14 through 19   |
 
 *  do not connect VCC directly to a GPIO only trough some kind of Mosfet or switch!
 
